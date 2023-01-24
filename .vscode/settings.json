@@ -1,0 +1,13 @@
+{
+    "editor.detectIndentation": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "eslint.enable": true,
+    "eslint.format.enable": true,
+    "eslint.codeActionsOnSave.mode": "all",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "editor.rulers": [100],
+    "files.trimTrailingWhitespace": true,
+}
