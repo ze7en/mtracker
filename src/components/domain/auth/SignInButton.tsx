@@ -1,14 +1,28 @@
-import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
-import { useAuth } from "~/lib/firebase";
+import { GithubAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 
 export const SignInButton = () => {
   const handleClick = () => {
-    const provider = new GoogleAuthProvider();
-    const auth = useAuth();
-    // @see https://firebase.google.com/docs/auth/web/google-signin
-    auth.languageCode = "ja";
+    const provider = new GithubAuthProvider();
+    const auth = getAuth();
 
-    signInWithRedirect(auth, provider);
+    // @see https://firebase.google.com/docs/auth/web/github-auth
+    signInWithPopup(auth, provider)
+      .then((result) => {
+
+        // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+        const credential = GithubAuthProvider.credentialFromResult(result);
+        const token = credential?.accessToken;
+
+        // The signed-in user info.
+        const user = result.user;
+      }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GithubAuthProvider.credentialFromError(error);
+
+        console.log(':: error', errorCode, errorMessage, email, credential)
+      });
   };
 
   return (
@@ -17,7 +31,7 @@ export const SignInButton = () => {
       type="button"
       className="btn btn-primary normal-case min-w-60"
     >
-      Sign In With Google
+      Sign In With GitHub!
     </button>
   );
 };

@@ -7,7 +7,7 @@ import { Head } from '~/components/shared/Head';
 
 function Index() {
   const { state } = useAuthState();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const completeButtonRef = useRef(null);
 
   return (
@@ -51,15 +51,6 @@ function Index() {
               ,{' '}
               <a className="link link-primary" target="_blank" href="https://github.com/eslint/eslint" rel="noreferrer">
                 ESLint
-              </a>
-              ,{' '}
-              <a
-                className="link link-primary"
-                target="_blank"
-                href="https://github.com/prettier/prettier"
-                rel="noreferrer"
-              >
-                Prettier
               </a>
               .
             </p>
