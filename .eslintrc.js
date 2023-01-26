@@ -1,20 +1,24 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true
+    es2021: true,
   },
   extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
     'plugin:react/recommended',
-    'standard',
-    'prettier'
+    'plugin:react-hooks/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    impliedStrict: true,
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
     ecmaVersion: 12,
-    sourceType: 'module'
+    sourceType: 'module',
   },
   settings: {
     react: {
@@ -22,8 +26,10 @@ module.exports = {
     },
   },
   plugins: [
+    '@typescript-eslint',
+    'import',
+    'prefer-arrow',
     'react',
-    '@typescript-eslint'
   ],
   rules: {
     'array-bracket-spacing': [ 'error', 'always' ],

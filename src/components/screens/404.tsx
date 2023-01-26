@@ -1,17 +1,17 @@
-import {Head} from "~/components/shared/Head";
+import { Head } from '~/components/shared/Head'
 
-function Page404() {
+export const Page404 = () => {
   return (
     <>
-      <Head title={'404 The page is not found'}></Head>
+      <Head title={ '404 The page is not found' }></Head>
       <div className="hero min-h-screen bg-gray-800">
         <div className="text-center hero-content text-3xl font-bold">
           <div>
             <h1>
               404 The page is not found...
             </h1>
-            <div className='mt-4'>
-              <a href='/' className='link-primary'>Top Page</a>
+            <div className="mt-4">
+              <a href="/" className="link-primary">Top Page</a>
             </div>
           </div>
         </div>
@@ -19,5 +19,3 @@ function Page404() {
     </>
   )
 }
-
-export default Page404

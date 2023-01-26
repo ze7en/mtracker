@@ -1,25 +1,31 @@
-import { lazy, Suspense } from 'react';
-import { Outlet, RouteObject, useRoutes, HashRouter } from 'react-router-dom';
-import { useAuthState } from '../contexts/UserContext';
+import { Suspense } from 'react'
+import { Outlet, RouteObject, useRoutes, HashRouter } from 'react-router-dom'
+import { useAuthState } from '../contexts/UserContext'
+import { lazyImport } from '~/utils'
+import { SignInButton } from '../domain/auth/SignInButton'
+import { SignOutButton } from '../domain/auth/SignOutButton'
+import { Loading } from '../shared/Loading'
 
-const Loading = () => <p className="p-4 w-full h-full text-center">Loading...</p>;
+const { Index } = lazyImport(() => import('~/components/screens/Index'), 'Index')
+const { Page404 } = lazyImport(() => import('~/components/screens/404'), 'Page404')
 
-const IndexScreen = lazy(() => import('~/components/screens/Index'));
-const Page404Screen = lazy(() => import('~/components/screens/404'));
-
-function Layout() {
-  const { state } = useAuthState();
-
-  console.log(state.state)
+const Layout = () => {
+  const { state } = useAuthState()
 
   return (
-    <div>
+    <div className="w-full p-2 md:w-8/12 m-auto">
       <nav className="p-4 flex items-center justify-between">
-        <span>{state.state === 'SIGNED_IN' ? `Welcome to mTracker ${state.currentUser.displayName}` : 'Please sign in to access mTracker'}</span>
+        <span>
+          {state.state === 'SIGNED_IN' ? `Welcome to mTracker` : 'Please sign in to access mTracker'}
+          {state.state === 'SIGNED_IN' && <img src={ state.currentUser.photoURL || 'default.png' } alt={ state.currentUser.displayName || 'profile' } className="inline ml-2 w-6 h-6 rounded-lg" />}
+        </span>
+        <div>
+          {state.state === 'UNKNOWN' ? null : state.state === 'SIGNED_OUT' ? <SignInButton /> : <SignOutButton />}
+        </div>
       </nav>
       <Outlet />
     </div>
-  );
+  )
 }
 
 export const Router = () => {
@@ -27,8 +33,8 @@ export const Router = () => {
     <HashRouter>
       <InnerRouter />
     </HashRouter>
-  );
-};
+  )
+}
 
 const InnerRouter = () => {
   const routes: RouteObject[] = [
@@ -38,19 +44,20 @@ const InnerRouter = () => {
       children: [
         {
           index: true,
-          element: <IndexScreen />,
+          element: <Index />,
         },
         {
           path: '*',
-          element: <Page404Screen />,
+          element: <Page404 />,
         },
       ],
     },
-  ];
-  const element = useRoutes(routes);
+  ]
+  const element = useRoutes(routes)
+
   return (
     <div>
-      <Suspense fallback={<Loading />}>{element}</Suspense>
+      <Suspense fallback={ <Loading /> }>{element}</Suspense>
     </div>
-  );
-};
+  )
+}
