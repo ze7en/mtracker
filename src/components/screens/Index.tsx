@@ -65,6 +65,31 @@ const getDateString = (dateInput: string | number) => {
   return `${date.getFullYear()}/${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}/${date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()}`
 }
 
+type TooltipProps = {
+  active?: boolean;
+  payload?: any;
+  label?: string;
+}
+
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white rounded border border-gray-500 p-2">
+        <p className="font-semibold">{label}</p>
+        <p>Average rating: {payload[0].value}</p>
+        <p>All ratings: {payload[0].payload.ratings.toString()}</p>
+        <ul>
+          <li key="0">All notes:</li>
+          {payload[0].payload.notes?.map((notes: any) => notes?.map((note: any, index: number) => note.length > 0 && <li className="block mt-1" key={ index+1 }>{`"${note}"`}</li>))}
+        </ul>
+      </div>
+    )
+  }
+
+  return null
+}
+
 export const Index = () => {
   const { state } = useAuthState()
   const db = getDatabase()
@@ -96,8 +121,6 @@ export const Index = () => {
           }
         })
 
-        chartData.filter((c: any) => c.date === getDateString(Date.now())).length > 0 && setCheckedIn(true)
-
         setCheckins([ ...baseData, ...chartData ])
       } else {
         console.log('No data available')
@@ -106,7 +129,7 @@ export const Index = () => {
       console.log('error get', error)
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ checkedIn ])
+  }, [ checkedIn, db ])
 
   const handleSubmitMood = () => {
     if (state.state === 'SIGNED_IN') {
@@ -128,30 +151,6 @@ export const Index = () => {
         console.log('error set', error)
       })
     }
-  }
-
-  type TooltipProps = {
-    active?: boolean;
-    payload?: any;
-    label?: string;
-  }
-
-  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white rounded border border-gray-500 p-2">
-          <p className="font-semibold">{label}</p>
-          <p>Average rating: {payload[0].value}</p>
-          <p>All ratings: {payload[0].payload.ratings.toString()}</p>
-          <ul>
-            <li key="0">All notes:</li>
-            {payload[0].payload.notes?.map((notes: any) => notes?.map((note: any, index: number) => note.length > 0 && <li className="block mt-1" key={ index+1 }>{`"${note}"`}</li>))}
-          </ul>
-        </div>
-      )
-    }
-
-    return null
   }
 
   return (

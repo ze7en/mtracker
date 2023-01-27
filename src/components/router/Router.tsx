@@ -16,8 +16,8 @@ const Layout = () => {
     <div className="w-full p-2 md:w-8/12 m-auto">
       <nav className="p-4 flex items-center justify-between">
         <span>
-          {state.state === 'SIGNED_IN' ? `Welcome to mTracker` : 'Please sign in to access mTracker'}
-          {state.state === 'SIGNED_IN' && <img src={ state.currentUser.photoURL || 'default.png' } alt={ state.currentUser.displayName || 'profile' } className="inline ml-2 w-6 h-6 rounded-lg" />}
+          {state.state === 'SIGNED_IN' ? `Welcome to moodTracker` : 'Please sign in to access moodTracker'}
+          {state.state === 'SIGNED_IN' && <img src={ state.currentUser.photoURL || 'default.png' } title={ state.currentUser.displayName || 'profile' } alt={ state.currentUser.displayName || 'profile' } className="inline ml-2 w-6 h-6 rounded-lg" />}
         </span>
         <div>
           {state.state === 'UNKNOWN' ? null : state.state === 'SIGNED_OUT' ? <SignInButton /> : <SignOutButton />}
