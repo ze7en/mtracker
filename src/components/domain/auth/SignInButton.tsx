@@ -9,21 +9,17 @@ export const SignInButton = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-        const credential = GithubAuthProvider.credentialFromResult(result)
+        // const credential = GithubAuthProvider.credentialFromResult(result)
         // const token = credential?.accessToken
 
         // The signed-in user info.
         const user = result.user
 
-        console.log('credentials', credential)
-        console.log('github user', user)
+        console.log(':: github user', user)
       }).catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        const email = error.customData.email
         const credential = GithubAuthProvider.credentialFromError(error)
 
-        console.log(':: error', errorCode, errorMessage, email, credential)
+        console.log(':: error', error.code, error.message, error.customData.email, credential)
       })
   }
 

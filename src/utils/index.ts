@@ -12,3 +12,9 @@ export const lazyImport = <
     [name]: React.lazy(() => factory().then(module => ({ default: module[name] }))),
   })
 }
+
+export const getDateString = (dateInput: string | number) => {
+  const date = new Date(dateInput)
+
+  return `${date.getFullYear()}/${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}/${date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()}`
+}

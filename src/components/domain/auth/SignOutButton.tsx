@@ -11,7 +11,7 @@ export const SignOutButton = () => {
     <button
       onClick={ handleClick }
       type="button"
-      className="btn btn-sm normal-case"
+      className="btn btn-link btn-xs"
     >
       Sign Out
     </button>

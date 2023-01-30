@@ -7,6 +7,7 @@ import { useSignIn, useSignOut } from '~/components/contexts/UserContext'
 export const Main = () => {
   const { signIn } = useSignIn()
   const { signOut } = useSignOut()
+
   useEffect(() => {
     setupFirebase()
 
@@ -19,7 +20,8 @@ export const Main = () => {
         signOut()
       }
     })
-  }, [ signIn, signOut ])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ ])
 
   return (
     <main>
