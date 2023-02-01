@@ -42,8 +42,6 @@ export const MoodChart = () => {
                 avg: 0,
               }
 
-              // setAmountOfCheckins((prevCount: number) => prevCount + Object.entries(entries).length)
-
               Object.entries(entries as object).map(([ userId, entry ]) => {
                 overallAverage += parseInt(entry.rating)
                 nbOfCheckins += 1
