@@ -62,7 +62,8 @@ export const CheckInForm = ({ state }: CheckInProps) => {
         }
       })
     }
-  }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ ])
 
   const handleSubmitMood = () => {
     if (state.state === 'SIGNED_IN') {
@@ -109,7 +110,7 @@ export const CheckInForm = ({ state }: CheckInProps) => {
     <div className="grid gap-2">
       <StarRate rating={ rating } onRating={ handleRating } />
       <textarea value={ note } onChange={ (e: ChangeEvent<HTMLTextAreaElement>) => setNote(e.target.value) } className="w-full p-2 border border-gray-300 rounded" />
-      <button onClick={ handleSubmitMood } className="btn btn-primary btn-md">Check in</button>
+      <button onClick={ handleSubmitMood } className="btn btn-primary btn-md">{uidd ? 'Check in (update)' : 'Check in'}</button>
     </div>
   </>
 }
