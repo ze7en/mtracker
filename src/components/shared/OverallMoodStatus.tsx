@@ -33,8 +33,8 @@ export const OverallStatus = ({ averageRating }: OverallStatusProps) => {
   }, [ averageRating ])
 
   return (
-    <div className={ `w-full py-3 px-4 mb-6 text-white rounded-md text-center ${bg}` }>
-      <p className="font-semibold">Overall mood for selected period: {averageRating.toFixed(1)}</p>
+    <div className={ `w-full py-1 px-4 text-white rounded-md text-center ${bg}` }>
+      <p className="font-semibold">{averageRating.toFixed(1)}</p>
     </div>
   )
 }

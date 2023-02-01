@@ -13,8 +13,10 @@ export const lazyImport = <
   })
 }
 
-export const getDateString = (dateInput: string | number) => {
-  const date = new Date(dateInput)
+export const getDateString = (dateInput: Date | number) => {
+  if (typeof dateInput === 'number') {
+    dateInput = new Date(dateInput)
+  }
 
-  return `${date.getFullYear()}/${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}/${date.getDate() < 9 ? `0${date.getDate()}` : date.getDate()}`
+  return `${dateInput.getFullYear()}/${dateInput.getMonth() < 9 ? `0${dateInput.getMonth() + 1}` : dateInput.getMonth() + 1}/${dateInput.getDate() < 9 ? `0${dateInput.getDate()}` : dateInput.getDate()}`
 }

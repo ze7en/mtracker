@@ -12,88 +12,60 @@ import {
 import { MoodChartTooltip } from './MoodChartTooltip'
 import { OverallStatus } from './OverallMoodStatus'
 
-
-const baseData = [
-  {
-    date: '2022/01/01',
-    ratings: [ 5, 3, 1, 2 ],
-    notes: [],
-    avg: 5,
-  },
-  {
-    date: '2022/01/02',
-    ratings: [ 3 ],
-    avg: 3,
-    notes: [],
-  },
-  {
-    date: '2023/01/01',
-    ratings: [ 5, 5, 5, 5 ],
-    notes: [],
-    avg: 5,
-  },
-  {
-    date: '2023/01/02',
-    ratings: [ 3 ],
-    avg: 3,
-    notes: [],
-  },
-  {
-    date: '2023/01/03',
-    ratings: [ 2, 3, 1 ],
-    avg: 2,
-    notes: [],
-  },
-  {
-    date: '2023/01/04',
-    ratings: [ 2, 3, 5 ],
-    avg: 4,
-    notes: [],
-  },
-  {
-    date: '2023/01/05',
-    ratings: [ 5, 5 ],
-    avg: 5,
-    notes: [],
-  },
-]
-
 export const MoodChart = () => {
-  const [ checkins, setCheckins ] = useState<any>(baseData)
+  const [ checkins, setCheckins ] = useState<any>([])
+  const [ filteredCheckins, setFilteredCheckins ] = useState<any>([])
+  const [ amountOfCheckins, setAmountOfCheckins ] = useState<any>(0)
   const [ averageRating, setAverageRating ] = useState<number>(3)
+  const [ filter, setFilter ] = useState<string>('10')
+  const [ showFilter, setShowFilter ] = useState<boolean>(checkins && checkins.length > 10)
+
   const db = getDatabase()
 
   useEffect(() => {
     get(ref(db, 'checkins')).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val()
-        const values = Object.values(data)
-
-        const groupedData = values.reduce((r: any, a:any) => {
-          r[a.date] = r[a.date] || []
-          r[a.date].push(a)
-
-          return r
-        }, Object.create(null))
 
         let overallAverage = 0
+        let nbOfCheckins = 0
 
-        const chartData = Object.entries(groupedData as object).map(([ key, value ]) => {
-          const avg = value.reduce((a: any, b: any) => parseInt(a) + parseInt(b.rating), 0) / value.length
+        const chartData = [] as any
 
-          overallAverage += avg
+        Object.entries(data as object).map(([ year, monthData ]) => {
+          Object.entries(monthData as object).map(([ month, dayData ]) => {
+            Object.entries(dayData as object).map(([ day, entries ]) => {
+              const checkin = {
+                date: '',
+                ratings: [ ] as number[],
+                notes: [ ] as string[],
+                avg: 0,
+              }
 
-          return {
-            date: key,
-            ratings: [ value.map((v: any) => v.rating) ],
-            notes: [ value.map((v: any) => v.note) ],
-            avg: avg.toFixed(1),
-          }
+              // setAmountOfCheckins((prevCount: number) => prevCount + Object.entries(entries).length)
+
+              Object.entries(entries as object).map(([ userId, entry ]) => {
+                overallAverage += parseInt(entry.rating)
+                nbOfCheckins += 1
+
+                checkin.date = new Date(entry.date).toLocaleDateString()
+                checkin.notes.push(entry.note)
+                checkin.ratings.push(parseInt(entry.rating))
+              })
+
+              checkin.avg = checkin.ratings.reduce((a: number, b: number) => a + b, 0) / checkin.ratings.length
+
+              chartData.push(checkin)
+            })
+          })
         })
 
-        setAverageRating(overallAverage / chartData.length)
+        setAverageRating(overallAverage / nbOfCheckins)
+        setAmountOfCheckins(nbOfCheckins)
+        setShowFilter(nbOfCheckins > 10)
 
-        setCheckins([ ...baseData, ...chartData ])
+        setCheckins([ ...chartData ].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()))
+
       } else {
         console.log(':: no data available')
       }
@@ -103,22 +75,62 @@ export const MoodChart = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ ])
 
+  useEffect(() => {
+    const filteredCheckins = [ ...checkins ]
+
+    if (filter === '10' && filteredCheckins.length >= 10) {
+      setFilteredCheckins(filteredCheckins.slice( filteredCheckins.length - 10, filteredCheckins.length))
+    } else {
+      setFilteredCheckins(filteredCheckins.filter((checkin: any) => {
+        if (filter === '2023') {
+          return new Date(checkin.date).getFullYear() === 2023
+        } else if (filter === '2022') {
+          return new Date(checkin.date).getFullYear() === 2022
+        } else {
+          return true
+        }
+      }))
+    }
+
+  }, [ filter, checkins ])
+
   return <>
     <div className="w-full" style={ { height: 400 } }>
-      <div className="w-full text-center mb-8">
-        <div className="btn-group m-auto">
-          <input type="radio" onChange={ () => console.log('7 days') } name="options" data-title="7 days" value="1" className="btn" />
-          <input type="radio" onChange={ () => console.log('2023') } name="options" data-title="2023" value="2023" className="btn" />
-          <input type="radio" onChange={ () => console.log('2022') } name="options" data-title="2022" value="2022" className="btn" />
-          <input type="radio" onChange={ () => console.log('All') } name="options" data-title="All" value="-1" className="btn" />
+      <div className="text-center">
+        <div className="stats shadow m-auto mb-8">
+          <div className="stat place-items-center">
+            <div className="stat-title">Users</div>
+            <div className="stat-value py-2 px-4">[4]</div>
+          </div>
+
+          <div className="stat place-items-center">
+            <div className="stat-title">Check ins</div>
+            <div className="stat-value py-2 px-4">{amountOfCheckins}</div>
+          </div>
+
+          <div className="stat place-items-center">
+            <div className="stat-title">Overall avg</div>
+            <div className="stat-value"><OverallStatus averageRating={ averageRating } /></div>
+          </div>
         </div>
       </div>
-      <OverallStatus averageRating={ averageRating } />
+      { showFilter &&
+      <div className="w-full text-center mb-4">
+        <div className="btn-group m-auto">
+          <input type="radio" checked={ filter === '10' ? true : false } onChange={ () => setFilter('10') } name="options" data-title="Last 10" value="10" className="btn" />
+          <input type="radio" checked={ filter === '30' ? true : false } onChange={ () => setFilter('30') } name="options" data-title="Last 30" value="30" className="btn" />
+          <input type="radio" checked={ filter === '90' ? true : false } onChange={ () => setFilter('90') } name="options" data-title="Last 90" value="90" className="btn" />
+          <input type="radio" checked={ filter === '2023' ? true : false } onChange={ () => setFilter('2023') } name="options" data-title="2023" value="2023" className="btn" />
+          <input type="radio" checked={ filter === '2022' ? true : false } onChange={ () => setFilter('2022') } name="options" data-title="2022" value="2022" className="btn" />
+          <input type="radio" checked={ filter === '-1' ? true : false } onChange={ () => setFilter('-1') } name="options" data-title="All" value="-1" className="btn" />
+        </div>
+      </div>
+      }
       <ResponsiveContainer>
         <ComposedChart
           width={ 500 }
           height={ 300 }
-          data={ checkins }
+          data={ filteredCheckins }
           margin={ {
             top: 10,
             right: 40,
@@ -128,14 +140,16 @@ export const MoodChart = () => {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
-          <YAxis />
+          <YAxis domain={ [ 1, 'dataMax + 1' ] } />
           <Tooltip content={ <MoodChartTooltip /> } />
           <Legend />
           <Line
+            key={ Math.random() }
             type="monotone"
             dataKey="avg"
             stroke="#1A8763"
-            activeDot={ { r: 8 } }
+            dot={ { strokeWidth: 1, r: 4 } }
+            activeDot={ { r: 8, opacity: 0.5 } }
           />
         </ComposedChart>
       </ResponsiveContainer>
