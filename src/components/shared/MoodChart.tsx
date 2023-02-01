@@ -1,4 +1,4 @@
-import { get, ref, getDatabase } from 'firebase/database'
+import { get, ref, getDatabase, DatabaseReference, onChildAdded, onChildChanged, onChildRemoved } from 'firebase/database'
 import { useEffect, useState } from 'react'
 import {
   ComposedChart,
@@ -22,8 +22,8 @@ export const MoodChart = () => {
 
   const db = getDatabase()
 
-  useEffect(() => {
-    get(ref(db, 'checkins')).then((snapshot) => {
+  const getCheckinInitChartData = (checkinsRef: DatabaseReference) => {
+    get(checkinsRef).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val()
 
@@ -72,6 +72,26 @@ export const MoodChart = () => {
     }).catch((error) => {
       console.log(':: error get mood data', error)
     })
+  }
+
+  useEffect(() => {
+    const checkinsRef = ref(db, 'checkins')
+
+    getCheckinInitChartData(checkinsRef)
+
+    onChildAdded(checkinsRef, () => {
+      getCheckinInitChartData(checkinsRef)
+    })
+
+    onChildChanged(checkinsRef, () => {
+      getCheckinInitChartData(checkinsRef)
+    })
+
+    onChildRemoved(checkinsRef, () => {
+      getCheckinInitChartData(checkinsRef)
+    })
+
+    getCheckinInitChartData(checkinsRef)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ ])
 
