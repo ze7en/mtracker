@@ -78,8 +78,10 @@ export const MoodChart = () => {
   useEffect(() => {
     const filteredCheckins = [ ...checkins ]
 
-    if (filter === '10' && filteredCheckins.length >= 10) {
-      setFilteredCheckins(filteredCheckins.slice( filteredCheckins.length - 10, filteredCheckins.length))
+    const filterNumber = parseInt(filter)
+
+    if (filterNumber < 100 && filterNumber > 0 && filteredCheckins.length >= 10) {
+      setFilteredCheckins(filteredCheckins.slice( filteredCheckins.length - filterNumber, filteredCheckins.length))
     } else {
       setFilteredCheckins(filteredCheckins.filter((checkin: any) => {
         if (filter === '2023') {
