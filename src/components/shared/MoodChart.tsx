@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import {
   ComposedChart,
   Line,
+  Label,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -115,7 +116,7 @@ export const MoodChart = () => {
   }, [ filter, checkins ])
 
   return <>
-    <div className="w-full" style={ { height: 400 } }>
+    <div className="w-full">
       <div className="text-center">
         <div className="stats shadow m-auto mb-8">
           <div className="stat place-items-center">
@@ -137,37 +138,55 @@ export const MoodChart = () => {
       { showFilter &&
       <div className="w-full text-center mb-4">
         <div className="btn-group m-auto">
-          <input type="radio" checked={ filter === '10' ? true : false } onChange={ () => setFilter('10') } name="options" data-title="Last 10" value="10" className="btn" />
-          <input type="radio" checked={ filter === '30' ? true : false } onChange={ () => setFilter('30') } name="options" data-title="Last 30" value="30" className="btn" />
-          <input type="radio" checked={ filter === '90' ? true : false } onChange={ () => setFilter('90') } name="options" data-title="Last 90" value="90" className="btn" />
-          <input type="radio" checked={ filter === '2023' ? true : false } onChange={ () => setFilter('2023') } name="options" data-title="2023" value="2023" className="btn" />
-          <input type="radio" checked={ filter === '2022' ? true : false } onChange={ () => setFilter('2022') } name="options" data-title="2022" value="2022" className="btn" />
-          <input type="radio" checked={ filter === '-1' ? true : false } onChange={ () => setFilter('-1') } name="options" data-title="All" value="-1" className="btn" />
+          <input type="radio" checked={ filter === '10' ? true : false } onChange={ () => setFilter('10') } name="options" data-title="Last 10" value="10" className="btn btn-sm" />
+          <input type="radio" checked={ filter === '30' ? true : false } onChange={ () => setFilter('30') } name="options" data-title="Last 30" value="30" className="btn btn-sm" />
+          <input type="radio" checked={ filter === '90' ? true : false } onChange={ () => setFilter('90') } name="options" data-title="Last 90" value="90" className="btn btn-sm" />
+          <input type="radio" checked={ filter === '2023' ? true : false } onChange={ () => setFilter('2023') } name="options" data-title="2023" value="2023" className="btn btn-sm" />
+          <input type="radio" checked={ filter === '2022' ? true : false } onChange={ () => setFilter('2022') } name="options" data-title="2022" value="2022" className="btn btn-sm" />
+          <input type="radio" checked={ filter === '-1' ? true : false } onChange={ () => setFilter('-1') } name="options" data-title="All" value="-1" className="btn btn-sm" />
         </div>
       </div>
       }
-      <ResponsiveContainer>
+      <ResponsiveContainer width={ '100%' } height={ 400 }>
         <ComposedChart
           width={ 500 }
           height={ 300 }
           data={ filteredCheckins }
           margin={ {
             top: 10,
-            right: 40,
-            left: 0,
+            right: 20,
+            left: 20,
             bottom: 10,
           } }
         >
+          <defs>
+            <linearGradient id="rating" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stopColor="#F87171" />
+              <stop offset="25%" stopColor="#FB923C" />
+              <stop offset="50%" stopColor="#FACC15" />
+              <stop offset="75%" stopColor="#A3E635" />
+              <stop offset="100%" stopColor="#4ADE80" />
+            </linearGradient>
+          </defs>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
-          <YAxis domain={ [ 1, 'dataMax + 1' ] } />
+          <YAxis domain={ [ '1', '5' ] }>
+            <Label
+              value={ 'Rating' }
+              position="left"
+              angle={ -90 }
+              style={ { textAnchor: 'middle' } }
+            />
+          </YAxis>
           <Tooltip content={ <MoodChartTooltip /> } />
           <Legend />
           <Line
             key={ Math.random() }
             type="monotone"
             dataKey="avg"
-            stroke="#1A8763"
+            name="average rating per date"
+            stroke="url(#rating)"
+            strokeWidth={ 3 }
             dot={ { strokeWidth: 1, r: 4 } }
             activeDot={ { r: 8, opacity: 0.5 } }
           />

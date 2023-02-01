@@ -15,17 +15,17 @@ const Layout = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full p-2 md:w-8/12 m-auto">
+    <div className="w-full p-2 md:w-10/12 m-auto">
       <nav className="py-4 flex items-center justify-between">
         <div className="navbar bg-white shadow rounded-lg">
           <div className="flex-none">
             <ul className="menu menu-compact menu-horizontal px-1">
-              <li>
+              <li className="mr-2">
                 <span onClick={ () => navigate('/') }><strong>moodTracker</strong></span>
               </li>
               {state.state === 'SIGNED_IN' && <>
                 <li className="mr-2"><NavLink to={ '/' }>Overview</NavLink></li>
-                <li><NavLink to={ '/checkin' }>Check In</NavLink></li>
+                <li className="mr-2"><NavLink to={ '/checkin' }>Check In</NavLink></li>
               </>
               }
             </ul>
