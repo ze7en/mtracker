@@ -13,7 +13,7 @@ export const MoodChartTooltip = ({ active, payload, label }: TooltipProps) => {
         <p>All ratings: {payload[0].payload.ratings?.toString()}</p>
         <ul>
           <li key="0">All notes:</li>
-          {payload[0].payload.notes?.map((note: any, index: number) => note.length > 0 && <li className="block mt-1" key={ index+1 }>{`"${note}"`}</li>)}
+          {payload[0].payload.notes?.map((note: any, index: number) => note?.length > 0 && <li className="block mt-1" key={ index+1 }>{`"${note}"`}</li>)}
         </ul>
       </div>
     )

@@ -24,8 +24,8 @@ const Layout = () => {
                 <span onClick={ () => navigate('/') }><strong>moodTracker</strong></span>
               </li>
               {state.state === 'SIGNED_IN' && <>
-                <li className="mr-2"><NavLink to={ '/' }>Overview</NavLink></li>
-                <li className="mr-2"><NavLink to={ '/checkin' }>Check In</NavLink></li>
+                <li className="mr-2 hidden"><NavLink to={ '/overview' }>Overview</NavLink></li>
+                <li className="mr-2"><NavLink to={ '/' }>Check In</NavLink></li>
               </>
               }
             </ul>
@@ -73,11 +73,11 @@ const InnerRouter = () => {
       children: [
         {
           index: true,
-          element: <Index />,
+          element: <CheckIn />,
         },
         {
-          path: 'checkin',
-          element: <CheckIn />,
+          path: 'overview',
+          element: <Index />,
         },
         {
           path: '*',
